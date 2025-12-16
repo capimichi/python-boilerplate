@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 from starlette.responses import RedirectResponse
 
-from namespace.container.example_container import ExampleContainer
+from namespace.container.default_container import DefaultContainer
 from namespace.controller.example_controller import ExampleController
 
 
@@ -13,8 +13,8 @@ app = FastAPI(
     version="1.0.0",
 )
 
-example_container: ExampleContainer = ExampleContainer.getInstance()
-example_controller: ExampleController = example_container.get(ExampleController)
+default_container: DefaultContainer = DefaultContainer.getInstance()
+example_controller: ExampleController = default_container.get(ExampleController)
 
 app.include_router(example_controller.router)
 
@@ -40,7 +40,7 @@ async def health_check():
 if __name__ == "__main__":
     uvicorn.run(
         "namespace.api:app",
-        host="0.0.0.0",
-        port=8459,
+        host=default_container.get_var("api_host"),
+        port=default_container.get_var("api_port"),
         reload=False,
     )

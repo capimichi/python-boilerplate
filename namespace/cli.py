@@ -1,5 +1,7 @@
 import click
-from namespace.command.example_command import example_command
+
+from namespace.command.example_command import ExampleCommand
+from namespace.container.default_container import DefaultContainer
 
 
 @click.group()
@@ -8,7 +10,12 @@ def cli():
     pass
 
 
-cli.add_command(example_command)
+# Resolve dependencies via container, similar to API setup
+default_container = DefaultContainer.getInstance()
+
+example_command: ExampleCommand = default_container.get(ExampleCommand)
+cli.add_command(example_command.to_click_command())
+
 
 if __name__ == '__main__':
     cli()
